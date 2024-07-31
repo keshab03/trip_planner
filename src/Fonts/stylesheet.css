@@ -1,0 +1,63 @@
+@font-face {
+    font-family: 'Mexcellent 3D';
+    src: url('Mexcellent3D-Regular.woff2') format('woff2'),
+        url('Mexcellent3D-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Mexcellent';
+    src: url('Mexcellent-Regular.woff2') format('woff2'),
+        url('Mexcellent-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Fargo Faro NF';
+    src: url('FargoFaroNF.woff2') format('woff2'),
+        url('FargoFaroNF.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Fargo Faro NF';
+    src: url('FargoFaroNF.woff2') format('woff2'),
+        url('FargoFaroNF.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'DS HermannGotisch';
+    src: url('DSHermannGotisch.woff2') format('woff2'),
+        url('DSHermannGotisch.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Kingthings Spike';
+    src: url('KingthingsSpike.woff2') format('woff2'),
+        url('KingthingsSpike.woff') format('woff');
+    font-weight: 100;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Maranallo';
+    src: url('Maranallo.woff2') format('woff2'),
+        url('Maranallo.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+

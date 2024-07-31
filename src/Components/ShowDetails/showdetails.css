@@ -1,0 +1,428 @@
+@font-face {
+  font-family: "Fargo Faro NF";
+  src: url("../../Fonts/FargoFaroNF.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "DS HermannGotisch";
+  src: url("../../Fonts/DSHermannGotisch.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Maranallo";
+  src: url("../../Fonts/Maranallo.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+.drag {
+  width: 100%;
+  height: 200px; /* Adjust as needed */
+  border: 2px dashed #ccc;
+  position: relative; /* Ensure .object is positioned relative to this container */
+  overflow: hidden; /* Hide any overflow from the animated image */
+}
+
+.drag-place {
+  /* margin-top: 80px; */
+}
+
+.object {
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  top: -50px; /* Start off-screen */
+  left: 50%;
+  transform: translateX(-50%); /* Center the image horizontally */
+  background: url('../../images/drag & drop.png') no-repeat center/contain; /* Replace with your dropping object image */
+  animation: drop 2s infinite;
+}
+
+@keyframes drop {
+  0% {
+    top: 20px; /* Start above the container */
+  }
+  70% {
+    top: 80px; /* Adjust so it’s within the container */
+  }
+  100% {
+    top: 120px; /* Ensure it stays within the container */
+  }
+}
+
+.empty-right-div {
+  margin: 1%;
+  box-sizing: border-box;
+  border: 1px solid rgb(206, 185, 185);
+  background-color: #fef9f9;
+  padding: 10px;
+  height: 95%;
+  width: 99%;
+  border-radius: 8px;
+  box-shadow: 2px 4px 13px #849984;
+  /* background-image: linear-gradient(to bottom, rgb(214, 145, 145) , rgb(148, 41, 41)); */
+
+}
+.empty-right-div > p {
+  width: 220px;
+  font-size: 26px;
+  margin: 30% 30%;
+  font-family: "Maranallo";
+
+  /* text-shadow: -8px 0px 20px black; */
+}
+/* @keyframes snowfall {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 0% 100%;
+  }
+}
+@keyframes gradientAnimation {
+  0% {
+    background-image: linear-gradient(to top, rgb(153, 52, 52), rgb(223, 216, 216));
+  }
+  50% {
+    background-image: linear-gradient(to top, rgb(233, 123, 123), rgb(208, 191, 191));
+  }
+  100% {
+    background-image: linear-gradient(to top, rgb(153, 52, 52), rgb(223, 216, 216));
+  }
+} */
+
+.right-div {
+  margin-top: 1%;
+  border-radius: 10px;
+  display: flex;
+  width: 50%;
+  height: 95%; /* Make sure the container has height */
+  overflow: auto;
+  position: relative; /* Required for absolute positioning of snowflakes */
+  overflow: hidden; /* Ensure snowflakes don't overflow */
+  /* animation: gradientAnimation 5s ease infinite; Apply the animation */
+}
+
+.right-div1 {
+  display: flex;
+  width: 50%;
+  height: 100vh; /* Make sure the container has height */
+  overflow: auto;
+  position: relative; /* Required for absolute positioning of snowflakes */
+  overflow: hidden; /* Ensure snowflakes don't overflow */
+}
+
+/* .snowflake {
+  position: absolute;
+  top: -10px;
+  width: 10px;
+  height: 10px;
+  background: white;
+  border-radius: 50%;
+  opacity: 0.8;
+  animation: fall 10s linear infinite;
+}
+
+@keyframes fall {
+  0% {
+    top: -10px;
+    opacity: 0.8;
+  }
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+} */
+
+/* Add variations in position and animation timing for a natural effect */
+/* .snowflake:nth-child(1) {
+  left: 10%;
+  animation-duration: 12s;
+}
+
+.snowflake:nth-child(2) {
+  left: 30%;
+  animation-duration: 15s;
+}
+
+.snowflake:nth-child(3) {
+  left: 50%;
+  animation-duration: 10s;
+}
+
+.snowflake:nth-child(4) {
+  left: 70%;
+  animation-duration: 14s;
+}
+
+.snowflake:nth-child(5) {
+  left: 90%;
+  animation-duration: 13s;
+} */
+
+.right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 50%;
+  width: 80%;
+}
+.drag-disabled {
+  pointer-events: none;
+  opacity: 0.0;
+  height: 92px;
+}
+
+.drag img {
+  background-color: #fef9f9;
+  margin: 10px 0;
+  padding: 20px;
+  border: 2px dashed black;
+  width: 250px;
+  text-align: center;
+  border-radius: 50%;
+  transform: rotate(-90deg);
+  height: 250px
+}
+.selected {
+  width: 100%;
+
+  padding: 20px;
+  border-radius: 8px;
+  /* box-shadow: 0 0 10px #85eb8d1a; */
+}
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.card {
+  justify-content: center;
+  background-color: #fef9f9 !important;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  width: fit-content; /* Reduced width */
+  height: 40px; /* Reduced height */
+  text-align: center;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  position: relative; /* Required for tooltip positioning */
+  margin: 5px; /* Adjust margin as needed */
+}
+.card:hover {
+  cursor: pointer;
+  transform: scale(1.05);
+}
+
+.card:hover::before {
+  opacity: 1;
+}
+
+.hotel-card {
+  background-color: #fef9f9 !important;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  width: fit-content; /* Adjust width as needed */
+  height: 40px; /* Adjust height as needed */
+  text-align: center;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  margin: 5px; /* Adjust margin as needed */
+  position: relative; /* Required for tooltip positioning */
+}
+
+.hotel-card:hover {
+  cursor: pointer;
+  transform: scale(1.05);
+}
+
+.hotel-card:hover::before {
+  opacity: 1;
+}
+
+.hotel-card-content {
+  display: flex;
+}
+
+.delete-icon {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  color: red;
+  transition: transform 0.5s;
+}
+
+.delete-icon:hover {
+  transform: scale(1.5);
+}
+
+.selected p {
+  margin: 0;
+}
+
+.submitbtn {
+  /* background-image: linear-gradient(to bottom, rgb(214, 145, 145) , rgb(190, 93, 93)); */
+  margin: 10px 0;
+  height: 30px;
+  width: 80px;
+  border: 1px solid black;
+  background: transparent;
+  border-radius: 10px;
+  text-align: center;
+  transition: 0.5s;
+}
+
+.submitbtn:hover {
+  transform: scale(1.1);
+  text-decoration: underline;
+  font-weight: bolder;
+}
+
+.modal-content {
+  outline: outset !important;
+  background-color: #fef9f9;
+
+  /* background: linear-gradient(
+      to bottom,
+      rgb(184, 173, 173),
+      rgb(219, 219, 161)
+    ); */
+  box-shadow: -20px 10px 50px rgb(131, 125, 125);
+}
+.modal-btn {
+  font-size: large !important;
+  font-family: "Times New Roman", Times, serif !important;
+  background: transparent !important;
+  margin-right: 20px !important;
+  border: 1px solid #080707;
+  border-radius: 10px;
+  text-align: center;
+  transition: 0.5s;
+}
+.modal-btn:hover {
+  background: #52c044 !important;
+  color: rgb(224, 214, 214) !important;
+  border: 1px solid #080707 !important;
+  transform: scale(1.2);
+}
+.modal-btn1 {
+  font-size: large !important;
+  font-family: "Times New Roman", Times, serif !important;
+  background: transparent !important;
+  /* margin: 10px !important; */
+  border: 1px solid #080707;
+  border-radius: 10px;
+  text-align: center;
+  transition: 0.5s;
+}
+.modal-btn1:hover {
+  background: #ec0f07 !important;
+  color: rgb(196, 179, 179) !important;
+  border: 1px solid #080707 !important;
+  transform: scale(1.2);
+}
+.text-small {
+  font-weight: bold;
+  font-family: "Maranallo";
+}
+.text-large {
+  font-size: 18px;
+  width: 100%;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+}
+.day-text {
+  margin-left: 100px;
+}
+.adult-text {
+  margin-left: 128px;
+}
+.child-text {
+  margin-left: 84px;
+}
+.date-text {
+  margin-left: 36px;
+}
+.typeing-box {
+  display: flex;
+  flex-direction: column;
+  /* align-items: center; */
+  padding: 5px;
+  width: 128%;
+  height: 339px;
+  /* margin-top: 50px; */
+  /* margin-left: 50px; */
+  border: 1px solid gray;
+  border-radius: 10px;
+  /* font-weight: bold; */
+  text-align: left;
+  overflow: auto;
+}
+.typeing-box1 {
+  display: flex;
+  flex-direction: column;
+  /* align-items: center; */
+  padding: 5px;
+  width: 128%;
+  height: 411px;
+  /* margin-top: 50px; */
+  /* margin-left: 50px; */
+  border: 1px solid gray;
+  border-radius: 10px;
+  /* font-weight: bold; */
+  text-align: left;
+  overflow: auto;
+}
+.typeing-box-heading {
+  font-style: italic;
+  font-family: "DS HermannGotisch";
+}
+.typeing-box-content {
+  text-align: left;
+}
+
+@media screen and (max-width: 750px) {
+  .right-div {
+    font-family: none;
+    width: 100%;
+    overflow: auto;
+  }
+  .empty-right-div {
+    box-shadow: none;
+  }
+  .typeing-box1 {
+    overflow: auto;
+    height: 250px;
+  }
+  .selected {
+    box-shadow: none;
+  }
+  .drag-disabled {
+    display: none;
+  }
+  .drag {
+    margin-left: 100px;
+  }
+  .region-img {
+    width: max-content;
+  }
+  .drag-place {
+    display: none;
+  }
+  .confirm-modal{
+    display: none;
+  }
+  .mobile-modal{
+    display: block;
+  }
+}

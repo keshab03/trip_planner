@@ -1,0 +1,952 @@
+import React, { useState, useEffect } from "react";
+import "./adddetails.css";
+import axios from "axios";
+import { gsap } from "gsap";
+import { TextPlugin } from "gsap/TextPlugin";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+import "leaflet-routing-machine";
+import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
+
+import Typewriter from "typewriter-effect";
+gsap.registerPlugin(TextPlugin);
+delete L.Icon.Default.prototype._getIconUrl;
+
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl:
+  "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png",
+  iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
+});
+function AddDetails({
+  onNextStep,
+  currentStep,
+  setCurrentStep,
+  setDays,
+  setAdults,
+  setChild,
+  setDate,
+  selectedPlaces,
+  setSelectedPlaces,
+  setSelectedHotels,
+  setType,
+  setItem,
+  setPlace,
+  selectedHotels,
+  reset,
+  setReset,
+}) {
+  const [anyhotels] = useState(["Any 5Star", "Any 4Star", "Any 3Star", "Any"]);
+  const [data, setData] = useState([]);
+  const [showPlaces, setShowPlaces] = useState(true);
+
+  const [steps] = useState([
+    "How many days of tour you are planning?",
+    "Number of adults?",
+    "Number of children?",
+    "What will be the tour start date?",
+    "Which place do you want to visit?",
+    "Which hotel do you want?",
+  ]);
+  const [days, updateDays] = useState("");
+  const [adults, updateAdults] = useState("");
+  const [checkin, updateCheckin] = useState("");
+  const [childCount, updateChildCount] = useState("");
+  const [childrenAges, updateChildrenAges] = useState([]);
+  const [selectedRegion, setSelectedRegion] = useState(null);
+  const [regionDisabled, setRegionDisabled] = useState(false);
+  const [selectedPlace, setSelectedPlace] = useState([]);
+  const [selectedTouristPlaceHotels, setSelectedTouristPlaceHotels] = useState(
+    []
+  );
+  const [hoveredRegion, setHoveredRegion] = useState([]);
+  const [map, setMap] = useState(null);
+  const [markers, setMarkers] = useState([]);
+  const [routes, setRoutes] = useState([]);
+  const [currentLocation, setCurrentLocation] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get("http://localhost:3001/allplace");
+        console.log("res.data", res.data);
+        setData(res.data);
+      } catch (error) {
+        console.error("Error fetching data", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleMouseEnter = (region) => {
+    setShowPlaces(false);
+    if (region !== hoveredRegion) {
+      setHoveredRegion(region);
+    }
+  };
+  const handleMouseLeave = () => {
+    // setShowPlaces(true);
+    //   setHoveredRegion([]);
+  };
+
+  const handleRegionClick = (region) => {
+    setSelectedRegion(region);
+    setSelectedPlace(null);
+    setRegionDisabled(true);
+    setShowPlaces(true);
+  };
+
+  const changeRegion = () => {
+    setSelectedRegion(null);
+    setSelectedPlace(null);
+    setRegionDisabled(false);
+    setShowPlaces(true);
+    setSelectedPlaces([]);
+    setSelectedHotels([]);
+  };
+
+  const handlePlaceClick = (place) => {
+    setSelectedPlace(place);
+    setShowPlaces(false);
+  };
+  useEffect(() => {
+    gsap.from(`.left-div`, {
+      y: -220,
+      duration: 2,
+    });
+    gsap.from(".left-div", {
+      x: 0,
+      duration: 2,
+    });
+  }, []);
+  useEffect(() => {
+    // Animate the question text on currentStep change
+    if (currentStep >= 1 && currentStep < steps.length) {
+      gsap.from(".day-inp", {
+        x: -280,
+        duration: 0.3,
+      });
+      gsap.to(".day-inp", {
+        x: 0,
+        duration: 0.3,
+      });
+
+      gsap.from(".arrow-container", {
+        x: 280,
+        duration: 0.3,
+      });
+      gsap.to(".arrow-container", {
+        x: 10,
+        duration: 0.3,
+      });
+    }
+  }, [currentStep, steps, selectedRegion]);
+
+  useEffect(() => {
+    // Animate the question text on currentStep change
+    if (selectedRegion) {
+      gsap.from(".selected-region-name", {
+        x: 280,
+        duration: 5,
+      });
+      gsap.to(".selected-region-name", {
+        x: 10,
+        duration: 5,
+      });
+    }
+  }, [selectedRegion]);
+
+  const handleNextStep = () => {
+    if (currentStep === 0) {
+      if (!days) {
+        alert("Please enter the number of days.");
+        return;
+      }
+      setDays(days);
+      onNextStep(days);
+    } else if (currentStep === 1) {
+      if (!adults) {
+        alert("Please enter the number of adults.");
+        return;
+      }
+      setAdults(adults);
+      onNextStep(adults);
+    } else if (currentStep === 2) {
+      if (childCount && childrenAges.some((age) => age === "")) {
+        alert("Please enter the age for each child.");
+        return;
+      }
+      if (isNaN(childCount) || childCount === 0) {
+        setChild("", "");
+        onNextStep();
+      } else {
+        setChild(childCount, childrenAges);
+        onNextStep(childCount, childrenAges);
+      }
+    } else if (currentStep === 3) {
+      if (!checkin) {
+        alert("Please enter the date.");
+        return;
+      }
+      setDate(checkin);
+      onNextStep(checkin);
+    }
+  };
+
+  const handleDragStart = (e, type, item, place) => {
+    e.dataTransfer.setData("type", type);
+    e.dataTransfer.setData("item", item);
+    e.dataTransfer.setData("place", place);
+  };
+  const handleClick = (e, type, item, place) => {
+    setType(type);
+    setItem(item);
+    setPlace(place);
+  };
+  const touristplacehandleDragStart = (e, type, item, rdata) => {
+    if (e.dataTransfer) {
+      e.dataTransfer.setData("type", type);
+      e.dataTransfer.setData("item", item);
+    }
+    // Ensure rdata is an object with 'name' and 'hotels'
+    if (
+      rdata &&
+      rdata.name &&
+      rdata.hotels &&
+      Array.isArray(rdata.hotels) &&
+      e.dataTransfer
+    ) {
+      setSelectedTouristPlaceHotels((prevSelected) => {
+        // Check if the placeName already exists in prevSelected
+        const placeExists = prevSelected.some(
+          (place) => place.name === rdata.name
+        );
+
+        if (!placeExists) {
+          // Add the new place to prevSelected
+          return [...prevSelected, { name: rdata.name, hotels: rdata.hotels }];
+        } else {
+          // Update the existing place's hotels if it already exists
+          return prevSelected.map((place) => {
+            if (place.name === rdata.name) {
+              // Merge and filter out duplicates from hotels list
+              const mergedHotels = [
+                ...new Set([...place.hotels, ...rdata.hotels]),
+              ];
+              return { ...place, hotels: mergedHotels };
+            } else {
+              return place;
+            }
+          });
+        }
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (map) {
+      return;
+    }
+
+    const initializeMap = async () => {
+      try {
+        const mapInstance = L.map("map").setView([51.505, -0.09], 15);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        }).addTo(mapInstance);
+
+        setMap(mapInstance);
+      } catch (error) {
+        console.error("Error initializing map:", error);
+      }
+    };
+
+    initializeMap();
+  }, [map]);
+
+  const getCoordinates = async (placeName) => {
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+        placeName
+      )}`
+    );
+    const data = await response.json();
+    console.log("data", data);
+    if (data.length > 0) {
+      const { lat, lon } = data[0];
+      return { lat, lon };
+    } else {
+      throw new Error("Place not found");
+    }
+  };
+console.log("setSelectedTouristPlaceHotels",selectedPlaces);
+selectedPlaces.map((place, index) => {
+  // Here, place refers to each element in selectedPlaces array
+  // index refers to the index of the current element
+
+  // Example usage:
+  console.log(`Index: ${index}, Place Name: ${place}`);
+})
+  const clicking = async (e, type, item, rdata) => {
+    try {
+      setType(type);
+      setItem(item);
+  
+      const coordinates = await getCoordinates(rdata.name);
+      console.log("Fetched coordinates:", coordinates);
+  
+      if (map && coordinates) {
+        const markerLabel = String.fromCharCode('A'.charCodeAt(0) + selectedTouristPlaceHotels.length); // Generate label A, B, C, ...
+  
+        // Add the marker with the default icon
+        const marker = L.marker([coordinates.lat, coordinates.lon])
+          .bindPopup(`${rdata.name}<br>Hotels: ${rdata.hotels.join(", ")}`)
+          .addTo(map);
+  
+        setMarkers((prevMarkers) => [...prevMarkers, marker]);
+  
+        // Create a custom label divIcon for the marker label
+        const labelIcon = L.divIcon({
+          className: 'custom-label-icon',
+          html: `<div class="marker-label">${markerLabel}</div>`,
+          // iconSize: null // Size will be determined by the content
+        });
+  
+        // Add the label icon as a marker
+        const labelMarker = L.marker([coordinates.lat, coordinates.lon], { icon: labelIcon })
+          .addTo(map);
+  
+        // Add the label marker to the state
+        setMarkers((prevMarkers) => [...prevMarkers, labelMarker]);
+  
+        setSelectedTouristPlaceHotels((prevSelected) => {
+          const placeExists = prevSelected.some((place) => place.name === rdata.name);
+  
+          if (!placeExists) {
+            return [
+              ...prevSelected,
+              { name: rdata.name, hotels: rdata.hotels, coordinates },
+            ];
+          } else {
+            return prevSelected.map((place) => {
+              if (place.name === rdata.name) {
+                const mergedHotels = [...new Set([...place.hotels, ...rdata.hotels])];
+                return { ...place, hotels: mergedHotels, coordinates };
+              } else {
+                return place;
+              }
+            });
+          }
+        });
+  
+        // Clear and redraw routes for all selected places
+        clearRoutes();
+        const allPlaces = [...selectedTouristPlaceHotels, { name: rdata.name, coordinates }];
+        for (let i = 0; i < allPlaces.length - 1; i++) {
+          drawRoute(allPlaces[i].coordinates, allPlaces[i + 1].coordinates);
+        }
+      } else {
+        console.error("Map or coordinates are not available:", map, coordinates);
+      }
+    } catch (error) {
+      console.error("Error fetching coordinates:", error);
+    }
+  };
+  
+  // Function to draw a route between two coordinates
+  const drawRoute = (start, end) => {
+    try {
+      if (!map || !L.Routing) {
+        console.error("Map or L.Routing is not available:", map, L.Routing);
+        return;
+      }
+  
+      const routeControl = L.Routing.control({
+        waypoints: [L.latLng(start.lat, start.lon), L.latLng(end.lat, end.lon)],
+        createMarker: function () {
+          return null;
+        }, // Prevent additional markers
+        addWaypoints: false,
+        routeWhileDragging: false,
+        showAlternatives: false,
+        show: false
+      }).addTo(map);
+  
+      // Store the route control to be able to clear it later
+      setRoutes((prevRoutes) => [...prevRoutes, routeControl]);
+    } catch (error) {
+      console.error("Error drawing route:", error);
+    }
+  };
+  
+  const clearRoutes = () => {
+    routes.forEach((route) => map.removeControl(route));
+    setRoutes([]);
+  };
+  
+  
+
+ 
+
+
+  useEffect(() => {
+    const filterHotels = () => {
+      const filteredHotels = selectedTouristPlaceHotels.filter((touristPlace) =>
+        selectedPlaces.includes(touristPlace.name)
+      );
+      if (
+        JSON.stringify(filteredHotels) !==
+        JSON.stringify(selectedTouristPlaceHotels)
+      ) {
+        setSelectedTouristPlaceHotels(filteredHotels);
+      }
+    };
+
+    filterHotels();
+  }, [selectedPlaces]);
+
+  const handleDays = (e) => {
+    const count = parseInt(e.target.value);
+    if (count >= 1) {
+      updateDays(count);
+    }
+  };
+
+  const handleAdultsCount = (e) => {
+    const count = parseInt(e.target.value);
+    if (count >= 1) {
+      updateAdults(count);
+    }
+  };
+  const handleChildCountChange = (e) => {
+    const count = parseInt(e.target.value);
+    if (count >= 0 && count <= 5) {
+      updateChildCount(count);
+      updateChildrenAges(Array.from({ length: count }, () => ""));
+    }
+  };
+
+  const handleChildAgeChange = (index, value) => {
+    const age = parseInt(value);
+
+    if (!isNaN(age) && age >= 1 && age <= 11) {
+      const newAges = [...childrenAges];
+      newAges[index] = age;
+      updateChildrenAges(newAges);
+    }
+  };
+
+  const backbtn = () => {
+    setShowPlaces(true);
+  };
+
+  const backtoplaces = () => {
+    setShowPlaces(false);
+    if (!selectedPlace) {
+      setShowPlaces(true);
+    }
+    setCurrentStep(4);
+  };
+  const getTomorrowDate = () => {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+    return tomorrow.toISOString().split("T")[0];
+  };
+  const handleCheckinChange = (value) => {
+    const tomorrowDate = new Date(getTomorrowDate());
+    const enteredDate = new Date(value);
+
+    if (enteredDate < tomorrowDate) {
+      alert("Please enter a date that is tomorrow or later.");
+      updateCheckin(getTomorrowDate());
+    } else {
+      updateCheckin(value);
+    }
+  };
+
+  const NUM_COLUMNS = 3;
+
+  return (
+    <div className="left-div">
+      
+      
+        <div id="map" style={{ height: "400px" }}></div>
+      
+      <div className="questionnaire">
+        {currentStep === 0 && (
+          <h2>
+            <Typewriter
+              onInit={(typewriter) => {
+                typewriter
+                  .pauseFor(0.1)
+                  .typeString("Make Your Custom Package")
+                  .start();
+              }}
+              options={{
+                delay: 60,
+              }}
+            />
+          </h2>
+        )}
+        {currentStep === 0 && (
+          <div className="day-inp">
+            <p className="questions">
+              <Typewriter
+                onInit={(typewriter) => {
+                  typewriter
+                    .pauseFor(0.1)
+                    .typeString(steps[currentStep])
+                    .start();
+                }}
+                options={{
+                  delay: 30,
+                }}
+              />
+            </p>
+            <input
+              id="days-input"
+              type="number"
+              value={days}
+              onChange={handleDays}
+              placeholder="Enter number of days"
+            />
+            <div className="arrow-container">
+              <button className="arrow">
+                <i className="fa-solid fa-arrow-right"></i>
+              </button>
+              <button className="next-text" onClick={handleNextStep}>
+                Next
+              </button>
+            </div>
+          </div>
+        )}
+        {currentStep === 1 && (
+          <div className="day-inp">
+            <p className="questions">
+              <Typewriter
+                onInit={(typewriter) => {
+                  typewriter
+                    .pauseFor(100)
+                    .typeString(steps[currentStep])
+                    .start();
+                }}
+                options={{
+                  delay: 30,
+                }}
+              />
+            </p>
+            <input
+              id="adults-input"
+              type="number"
+              value={adults}
+              onChange={handleAdultsCount}
+              placeholder="Enter number of adults..."
+              min="1"
+            />
+            <div className="arrow-container">
+              <button className="arrow">
+                <i className="fa-solid fa-arrow-right"></i>
+              </button>
+              <button className="next-text" onClick={handleNextStep}>
+                Next
+              </button>
+            </div>
+          </div>
+        )}
+        {currentStep === 2 && (
+          <div className="day-inp">
+            <p className="questions">
+              <Typewriter
+                onInit={(typewriter) => {
+                  typewriter
+                    .pauseFor(100)
+                    .typeString(steps[currentStep])
+                    .start();
+                }}
+                options={{
+                  delay: 30,
+                }}
+              />
+            </p>
+            <input
+              id="child-count-input"
+              type="number"
+              value={childCount}
+              onChange={handleChildCountChange}
+              placeholder="Enter number of children..."
+            />
+
+            <div className="child-age">
+              {Array.from({ length: childCount }, (_, index) => (
+                <div key={index}>
+                  <input
+                    id="childs-age-input"
+                    type="number"
+                    value={childrenAges[index]}
+                    onChange={(e) =>
+                      handleChildAgeChange(index, e.target.value)
+                    }
+                    placeholder={`Enter age of child ${index + 1}...`}
+                    style={{ marginRight: "5px" }}
+                  />
+                  {childrenAges[index] && (
+                    <span style={{ color: "white" }}>yrs</span>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <div className="arrow-container">
+              <button className="arrow">
+                <i className="fa-solid fa-arrow-right"></i>
+              </button>
+              <button className="next-text" onClick={handleNextStep}>
+                Next
+              </button>
+            </div>
+          </div>
+        )}
+        {currentStep === 3 && (
+          <div className="day-inp">
+            <p className="questions">
+              <Typewriter
+                onInit={(typewriter) => {
+                  typewriter
+                    .pauseFor(100)
+                    .typeString(steps[currentStep])
+                    .start();
+                }}
+                options={{
+                  delay: 30,
+                }}
+              />
+            </p>
+            <input
+              id="adults-input"
+              type="date"
+              value={checkin}
+              onChange={(e) => handleCheckinChange(e.target.value)}
+              placeholder="Enter checkin date..."
+              min={getTomorrowDate()}
+            />
+            <div className="arrow-container">
+              <button className="arrow">
+                <i className="fa-solid fa-arrow-right"></i>
+              </button>
+              <button className="next-text" onClick={handleNextStep}>
+                Next
+              </button>
+            </div>
+          </div>
+        )}
+        {currentStep === 4 && (
+          <div>
+            <p className="questions1">
+              <Typewriter
+                onInit={(typewriter) => {
+                  typewriter
+                    .pauseFor(100)
+                    .typeString(steps[currentStep])
+                    .start();
+                }}
+                options={{
+                  delay: 30,
+                }}
+              />
+            </p>
+            {!selectedRegion ? (
+              <div className="places-row">
+                {data.map((region, index) => (
+                  <div
+                    className={`region-img ${
+                      selectedRegion && regionDisabled ? "region-disabled" : ""
+                    }`}
+                    key={index}
+                    id="place-drag"
+                    onClick={() => handleRegionClick(region)}
+                    onMouseEnter={() => handleMouseEnter(region)}
+                    onMouseLeave={handleMouseLeave}
+                  >
+                    <span>{region.name}</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="selected-region-name">
+                You are seeing the places in {selectedRegion.name}
+              </p>
+            )}
+
+            {selectedRegion && (
+              <div>
+                <strong>If you want to choose another region not this </strong>
+                <button className="region-btn" onClick={changeRegion}>
+                  Click here
+                </button>
+              </div>
+            )}
+
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              {!showPlaces && (
+                <div className="arrow-container">
+                  <button className="arrow">
+                    <i className="fa-solid fa-arrow-left"></i>
+                  </button>
+                  <button className="next-text" onClick={backbtn}>
+                    Back
+                  </button>
+                </div>
+              )}
+              <div className="arrow-container">
+                <button className="arrow">
+                  <i className="fa-solid fa-arrow-right"></i>
+                </button>
+                <button className="next-text" onClick={onNextStep}>
+                  Next
+                </button>
+              </div>
+            </div>
+
+            {!showPlaces && !selectedRegion && (
+              <div className="places-listing-card">
+                {hoveredRegion && (
+                  <table>
+                    <tbody>
+                      {Array.from({
+                        length: Math.ceil(
+                          hoveredRegion.places.length / NUM_COLUMNS
+                        ),
+                      }).map((_, rowIndex) => (
+                        <tr key={rowIndex}>
+                          {Array.from({ length: NUM_COLUMNS }).map(
+                            (_, colIndex) => {
+                              // Flatten and sort the places alphabetically
+                              const sortedPlaces = hoveredRegion.places
+                                .slice()
+                                .sort((a, b) => a.name.localeCompare(b.name));
+                              const placeIndex =
+                                rowIndex * NUM_COLUMNS + colIndex;
+                              const place = sortedPlaces[placeIndex];
+                              const className =
+                                placeIndex % 2 === 0 ? "blue-text" : "red-text"; // Alternate classes
+                              return (
+                                <td
+                                  key={colIndex}
+                                  className={`places-listing ${className}`}
+                                >
+                                  {place ? place.name : ""}
+                                </td>
+                              );
+                            }
+                          )}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            )}
+
+            {selectedRegion && (
+              <div className="places">
+                {showPlaces &&
+                  selectedRegion.places.map((place, index) => (
+                    <div
+                      className="places-img"
+                      key={index}
+                      id="place-drag"
+                      onClick={() => handlePlaceClick(place)}
+                    >
+                      <span>{place.name}</span>
+                    </div>
+                  ))}
+
+                {!showPlaces &&
+                  selectedPlace &&
+                  selectedPlace.touristPlaces && (
+                    <div className="tourist-places">
+                      {selectedPlace.touristPlaces.map(
+                        (touristPlace, index) => (
+                          <div
+                            className="places-img"
+                            key={index}
+                            id="place-drag"
+                            draggable
+                            onDragStart={(e) =>
+                              touristplacehandleDragStart(
+                                e,
+                                "place",
+                                touristPlace.name,
+                                touristPlace
+                              )
+                            }
+                          >
+                            <span>{touristPlace.name}</span>
+                          </div>
+                        )
+                      )}
+                    </div>
+                  )}
+
+                {!showPlaces &&
+                  selectedPlace &&
+                  selectedPlace.touristPlaces && (
+                    <div className="tourist-places-res">
+                      {selectedPlace.touristPlaces.map(
+                        (touristPlace, index) => (
+                          <div
+                            className="places-img"
+                            key={index}
+                            id="place-drag"
+                            onClick={(e) => {
+                              clicking(
+                                e,
+                                "place",
+                                touristPlace.name,
+                                touristPlace
+                              );
+                            }}
+                          >
+                            <span>{touristPlace.name}</span>
+                          </div>
+                        )
+                      )}
+                    </div>
+                  )}
+              </div>
+            )}
+          </div>
+        )}
+        {currentStep === 5 && (
+          <div className="myclass">
+            <p className="questions1">
+              <Typewriter
+                onInit={(typewriter) => {
+                  typewriter
+                    .pauseFor(100)
+                    .typeString(steps[currentStep])
+                    .start();
+                }}
+                options={{
+                  delay: 30,
+                }}
+              />
+            </p>
+
+            <div>
+              <div className="arrow-container1">
+                <button className="arrow">
+                  <i className="fa-solid fa-arrow-left"></i>
+                </button>
+                <button className="next-text" onClick={backtoplaces}>
+                  Back
+                </button>
+              </div>
+            </div>
+
+            <div className="hotels-row">
+              {selectedTouristPlaceHotels.length > 0 ? (
+                <div className="anyhotel-row">
+                  {anyhotels.map((anyhotel, index) => (
+                    <div
+                      className="any-hotel-img"
+                      key={index}
+                      id="hotel-drag"
+                      draggable
+                      onDragStart={(e) =>
+                        handleDragStart(e, "anyhotels", anyhotel)
+                      }
+                    >
+                      <span>{anyhotel}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <h3 className="place-not-selected">
+                  You have not chosen a place please go back and select a place
+                </h3>
+              )}
+
+              {selectedTouristPlaceHotels.length > 0 ? (
+                <div className="anyhotel-row-res">
+                  {anyhotels.map((anyhotel, index) => (
+                    <div
+                      className="any-hotel-img-res"
+                      key={index}
+                      id="hotel-drag"
+                      onClick={(e) => handleClick(e, "anyhotels", anyhotel)}
+                    >
+                      <span>{anyhotel}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <h3 className="place-not-selected-res">
+                  You have not chosen a place please go back and select a place
+                </h3>
+              )}
+
+              {selectedTouristPlaceHotels.length > 0 && (
+                <div className="choose-from-below">
+                  <p style={{ width: "100%" }}>OR Choose From Below</p>
+                </div>
+              )}
+
+              {selectedTouristPlaceHotels.map((place, placeIndex) => (
+                <div key={placeIndex} className="tourist-place-section">
+                  <h5>{place.name}</h5>
+                  <div className="hotels-row">
+                    {place.hotels.map((hotel, hotelIndex) => (
+                      <div
+                        className="hotel-img"
+                        key={`${placeIndex}-${hotelIndex}`}
+                        id="place-drag"
+                        draggable
+                        onDragStart={(e) =>
+                          handleDragStart(e, "hotel", hotel, place.name)
+                        }
+                        title={hotel.length > 8 ? hotel : ""}
+                      >
+                        <span>
+                          {hotel.length > 8 ? `${hotel.slice(0, 5)}...` : hotel}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+
+              {selectedTouristPlaceHotels.map((place, placeIndex) => (
+                <div key={placeIndex} className="tourist-place-section-res">
+                  <h5>{place.name}</h5>
+                  <div className="hotels-row-res">
+                    {place.hotels.map((hotel, hotelIndex) => (
+                      <div
+                        className="hotel-img-res"
+                        key={`${placeIndex}-${hotelIndex}`}
+                        id="place-drag"
+                        onClick={(e) =>
+                          handleClick(e, "hotel", hotel, place.name)
+                        }
+                        title={hotel.length > 8 ? hotel : ""}
+                      >
+                        <span>
+                          {hotel.length > 8 ? `${hotel.slice(0, 5)}...` : hotel}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default AddDetails;

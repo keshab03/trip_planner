@@ -1,0 +1,924 @@
+@font-face {
+  font-family: "Fargo Faro NF";
+  src: url("../../Fonts/FargoFaroNF.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "DS HermannGotisch";
+  src: url("../../Fonts/DSHermannGotisch.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Maranallo";
+  src: url("../../Fonts/Maranallo.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@keyframes bounce {
+
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: scale(1);
+  }
+
+  40% {
+    transform: scale(1.2);
+  }
+
+  60% {
+    transform: scale(0.9);
+  }
+}
+
+@keyframes gradientAnimation {
+  0% {
+    background: linear-gradient(45deg, rgb(58, 99, 175), rgb(145, 176, 214));
+  }
+
+  50% {
+    background: linear-gradient(45deg, rgb(110, 162, 204), rgb(72, 58, 175));
+  }
+
+  100% {
+    background: linear-gradient(45deg, rgb(58, 109, 175), rgb(145, 202, 214));
+  }
+}
+
+
+/* Reset and basic styling */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+#map {
+  position: relative;
+  height: 300px;
+  border-radius: 10px;
+  border: 2px solid rgb(161 141 141);
+  width: 99%;
+  margin-top: 5px;
+  margin-left: 1%;
+}
+
+.leaflet-right {
+  display: none;
+}
+
+.distance-label {
+  background-color: white;
+  border: 1px solid black;
+  padding: 5px;
+  border-radius: 3px;
+  width: max-content;
+  font-size: 14px;
+  text-align: center;
+}
+
+.distance-time-label {
+  font-weight: bold;
+}
+
+.show-name-container {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgb(254, 255, 249);
+  padding: 10px;
+  border-radius: 5px;
+  z-index: 1000;
+  font-size: 20px;
+  height: auto;
+  width: auto;
+}
+
+
+.show-name-item {
+  margin: 5px 0;
+}
+
+.show-name-item p {
+  margin: 0;
+}
+
+.custom-icon {
+
+  font-size: large;
+  width: 40px;
+  /* Adjust as needed */
+  height: 60px;
+  /* Adjust as needed */
+  /* text-align: center; */
+  line-height: 30px;
+  /* Should match height for vertical centering */
+}
+
+.leaflet-routing-container {
+  /* Your styling for the route panel */
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 10px;
+  max-width: 300px;
+  /* Adjust as per your design */
+  overflow-y: auto;
+  /* Enable scrolling if necessary */
+}
+
+.marker-name {
+  font-weight: bold;
+  color: white;
+  background-color: #0f1113;
+  /* Example background color */
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  margin-bottom: 500px;
+}
+
+.marker-label {
+  font-weight: bold;
+  color: white;
+  background-color: #007bff;
+  /* Example background color */
+  border-radius: 50%;
+  width: 21px;
+  height: 21px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* General App styling */
+.App {
+  display: flex;
+  /* Default to flex display */
+  justify-content: space-evenly;
+  height: 100vh;
+  width: 100%;
+  background-color: #fef9f9;
+}
+
+strong {
+  font-family: "Maranallo";
+}
+
+.left-div {
+  width: 50%;
+  /* border: 2px solid rgb(218, 205, 205); */
+  overflow: auto;
+}
+
+.myclass {
+  /* overflow: auto; */
+  height: 504px;
+}
+
+.questionnaire {
+  margin-top: 3%;
+  margin-left: 1%;
+  box-sizing: border-box;
+  border: 1px solid rgb(206, 185, 185);
+  background-color: #fef9f9;
+  /* background: linear-gradient(
+        to bottom,
+        rgb(184, 173, 173),
+        rgb(219, 219, 161)
+        ); */
+  padding: 10px;
+  height: 52%;
+  width: 99%;
+  border-radius: 8px;
+  box-shadow: 2px 4px 13px #849984;
+  animation: gradientAnimation 5s infinite;
+  overflow: auto;
+}
+
+.questions {
+  padding: 5px;
+  font-size: 25px;
+  font-family: 'ArgentumNovusRegular';
+  color: rgb(0, 0, 0);
+  background-color: rgb(224, 198, 198);
+  border-radius: 5px;
+
+  /* text-shadow: 6px 6px 13px black; */
+}
+
+.questions1 {
+  /* padding: 5px; */
+  font-size: 25px;
+  font-family: "ArgentumNovusRegular";
+  background-color: rgb(224, 198, 198);
+  border-radius: 5px;
+
+  /* color: white; */
+  /* text-shadow: 6px 6px 13px black; */
+
+}
+
+.day-inp {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+  margin-top: 12%;
+  background-color: #4e6db0;
+  border-radius: 10px;
+}
+
+.day-inp>input {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-bottom: 1px solid #ebe6e6;
+  box-shadow: none;
+  background: transparent;
+}
+
+h2 {
+  font-family: 'Maranallo';
+  background-color: rgb(224, 198, 198);
+  border-radius: 5px;
+}
+
+.child-age {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  width: 100%;
+}
+
+.child-age input {
+  border: none;
+  border-bottom: 1px solid #e2d9d9;
+  /* border-radius: 15px; */
+  background: transparent;
+  padding-left: 5px;
+  margin-top: 10px;
+}
+
+.child-age input:focus {
+  border-radius: 15px;
+  outline: none;
+}
+
+.child-age input::placeholder {
+  color: #eee6e6;
+}
+
+.day-inp>input:focus {
+  border-radius: 15px;
+  outline: none;
+}
+
+.day-inp>input::placeholder {
+  color: #eee6e6;
+}
+
+#days-input {
+  color: white;
+}
+
+#adults-input {
+  color: white;
+}
+
+#child-count-input {
+  color: white;
+}
+
+#childs-age-input {
+  color: white;
+}
+
+/* .hotels-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: space-around;
+      height: 400px;
+      overflow: auto;
+    } */
+.places-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-around;
+  height: 115px;
+  position: relative;
+  overflow: visible;
+}
+
+/* .hotels-row > div {
+    margin: 5px;
+    padding: 25px;
+    border: 1px solid black;
+    cursor: grab;
+    color: rgb(0, 0, 0);
+  } */
+.places-row>div {
+  margin: 5px;
+  padding: 25px;
+  border: 1px solid black;
+  cursor: pointer;
+  color: rgb(0, 0, 0);
+}
+
+.anyhotel-row {
+  display: flex;
+  flex-wrap: wrap;
+  border: 1px solid black;
+  border-radius: 10px;
+}
+
+.anyhotel-row-res {
+  display: none;
+}
+
+.place-not-selected-res {
+  display: none;
+}
+
+.choose-from-below {
+  width: 100%;
+  font-size: 20px;
+}
+
+.hotels-row {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  /* align-content: stretch; */
+  flex-wrap: wrap;
+  flex-direction: row;
+}
+
+.hotel-img {
+  background: #fff;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  cursor: grab;
+  margin: 5px;
+  height: 80px;
+  width: 117px;
+  transition: transform 0.2s ease;
+  background-image: url(../../images/istockphoto-119926339-612x612.jpg);
+  background-size: cover;
+  transition: 0.5s;
+}
+
+.hotel-img:hover {
+  border-radius: 50%;
+  box-shadow: 10px 10px 20px;
+  transform: scale(1.1);
+}
+
+.hotel-img span {
+  display: block;
+  text-align: center;
+  background-color: rgba(61, 56, 56, 0.7);
+  /* Adjust opacity as needed */
+  color: white;
+  font-size: 15px;
+  /* Adjust as needed */
+  /* padding: 5px; */
+  border-radius: 5px;
+  margin-top: 50px;
+}
+
+/* ### */
+.any-hotel-img {
+  background-image: url(../../images/istockphoto-119926339-612x612.jpg);
+  background-size: cover;
+  border-radius: 10px;
+  box-shadow: 10px 10px 20px;
+  transition: 0.5s;
+  display: flex;
+  cursor: grab;
+  align-items: center;
+  justify-content: center;
+  margin: 10px;
+  height: 80px;
+  width: 117px;
+}
+
+.any-hotel-img>span {
+  background-color: rgba(61, 56, 56, 0.7);
+  /* Adjust opacity as needed */
+  color: white;
+  font-size: 15px;
+  /* Adjust as needed */
+  /* padding: 5px; */
+  border-radius: 5px;
+  margin-top: 70px;
+  transition: 0.2s;
+}
+
+.any-hotel-img:hover {
+  border-radius: 50%;
+  box-shadow: 10px 10px 20px;
+  transform: scale(1.1);
+}
+
+/* %%%  */
+.region-img {
+  position: relative;
+  background-image: url(../../images/lalbagh\ 6.jpg);
+  background-size: cover;
+  border-radius: 10px;
+  box-shadow: 10px 10px 20px;
+  transition: 0.5s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80px;
+  width: 120px;
+  position: relative;
+  z-index: 1;
+  transition: transform 1s;
+}
+
+.region-img>span {
+  background-color: rgba(61, 56, 56, 0.7);
+  /* Adjust opacity as needed */
+  color: white;
+  font-size: 13px;
+  /* Adjust as needed */
+  /* padding: 5px 20px; */
+  border-radius: 5px;
+  margin-top: 70px;
+}
+
+.region-img:hover {
+  box-shadow: 10px 10px 20px;
+  /* background-image: none; */
+  transform: scale(1.5);
+  /* Scale up the image */
+  z-index: 10;
+  /* Bring it to the front */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.region-btn {
+  background-image: linear-gradient(to bottom, rgb(214, 145, 145), rgb(148, 41, 41));
+
+  margin: 10px 10px;
+  width: 100px;
+  border: none;
+  border-radius: 10px;
+  text-align: center;
+  transition: 0.5s;
+}
+
+.region-btn:hover {
+  transform: scale(1.1);
+  text-decoration: underline;
+  font-weight: bolder;
+}
+
+.selected-region-name {
+  font-family: "Rye", serif;
+  background-color: white;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 24px;
+  width: 80%;
+  color: #0f0101;
+  text-align: center;
+  /* padding: 5px; */
+  /* background: #ebe5e5; */
+  border-radius: 5px;
+  /* border: 1px solid #0a0a0a; */
+}
+
+.Typewriter__cursor {
+  display: none;
+}
+
+.reset-region {
+  width: 100%;
+  background-color: white;
+  text-align: center;
+  font-size: 20px;
+  border-radius: 5px;
+}
+
+.place-not-selected {
+  font-size: 15px;
+  width: 100%;
+  color: #0f0101;
+  text-align: center;
+  position: relative;
+
+  padding: 10px;
+  background: #a59999;
+  border-radius: 5px;
+  border: 2px solid #0a0a0a;
+}
+
+.places-listing-card {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  height: 200px;
+  overflow: auto;
+  border: 1px solid black;
+  border-radius: 15px;
+  box-shadow: 0px 5px 20px 0px black;
+  width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+  font-weight: bold;
+  /* font-family: 'Fargo Faro NF'; */
+  /* font-family: 'DS HermannGotisch'; */
+  font-family: "Maranallo";
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+td:hover {
+  background-color: #f1f1f1;
+}
+
+.blue-text {
+  color: blue;
+}
+
+.red-text {
+  color: red;
+}
+
+.places {
+  display: flex;
+  flex-wrap: wrap;
+  overflow: auto;
+  height: 190px;
+}
+
+.places-img {
+  position: relative;
+  background-image: url(../../images/lalbagh\ 6.jpg);
+  background-size: cover;
+  border-radius: 10px;
+  box-shadow: 10px 10px 20px;
+  transition: 0.5s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80px;
+  width: 160px;
+  margin: 9px;
+  cursor: pointer;
+}
+
+.places-img>span {
+  background-color: rgba(61, 56, 56, 0.7);
+  /* Adjust opacity as needed */
+  color: white;
+  font-size: small;
+  /* Adjust as needed */
+  /* padding: 5px 20px; */
+  border-radius: 5px;
+  margin-top: 70px;
+}
+
+.places-img:hover {
+  box-shadow: 10px 10px 20px;
+  /* background-image: none; */
+}
+
+.tourist-places {
+  display: flex;
+  flex-wrap: wrap;
+  /* height: 30%; */
+  overflow: auto;
+}
+
+.tourist-places-res {
+  display: none;
+}
+
+.tourist-places div {
+  cursor: grab;
+}
+
+.region-disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.next-text {
+  opacity: 0;
+  transition: opacity 0.2s;
+  display: none;
+  background-color: #eeebeb;
+  margin: 20px 0;
+  height: 30px;
+  width: 80px;
+  border: none;
+  border-radius: 10px;
+  text-align: center;
+  font-family: "DS HermannGotisch";
+  transition: 0.5s;
+}
+
+.next-text:hover {
+  /* color: rgb(253, 250, 245); */
+  text-decoration: underline;
+  font-weight: bolder;
+  /* background-color: rgb(78, 68, 68); */
+}
+
+.arrow-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  /* width: fit-content; */
+}
+
+.arrow-container1 {
+  cursor: pointer;
+  /* width: fit-content; */
+}
+
+.arrow {
+  background-color: #f5ebeb;
+  font-weight: bolder;
+  font-size: larger;
+  background: linear-gradient(to right, rgb(228, 192, 187), rgb(233, 116, 116));
+  margin: 20px 0;
+  height: 30px;
+  width: 80px;
+  border: none;
+  border-radius: 50px;
+  text-align: center;
+  animation: bounce 1.5s infinite;
+
+  /* font-size: 24px; */
+  transition: opacity 0.2s;
+}
+
+.arrow-container1:hover .arrow {
+  display: none;
+}
+
+.arrow-container1:hover .next-text {
+  display: inline;
+  opacity: 1;
+}
+
+.arrow-container:hover .arrow {
+  display: none;
+}
+
+.arrow-container:hover .next-text {
+  display: inline;
+  opacity: 1;
+}
+
+.back-arrow {
+  background-color: #9b9393;
+  font-weight: bolder;
+  font-size: larger;
+  /* background: linear-gradient(to right, rgb(140, 228, 140), rgb(161, 161, 135)); */
+  margin: 10px 0;
+  width: 80px;
+  border: none;
+  border-radius: 50px;
+  text-align: center;
+  font-size: 18px;
+}
+
+label {
+  font-family: "Times New Roman", Times, serif;
+  font-weight: bolder;
+  text-decoration: underline;
+}
+
+.tourist-place-section {
+
+  display: block;
+}
+
+.tourist-place-section-res {
+
+  display: none;
+}
+
+@media screen and (max-width: 750px) {
+  .App {
+    display: block;
+    padding: 10px;
+  }
+
+  .left-div {
+    width: 100%;
+    overflow: auto;
+    border: none;
+  }
+
+  .questionnaire {
+    box-shadow: none;
+  }
+
+  .day-inp {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    margin-top: 10%;
+    background-color: #933d3d;
+    border-radius: 10px;
+  }
+
+  .child-age {
+    padding: 15px;
+    justify-content: center;
+  }
+
+  .child-age input {
+    display: inline-block;
+    border-radius: 5px;
+    width: 110px;
+    margin-left: 5px;
+    text-align: center;
+  }
+
+  .places-img {
+    position: relative;
+    background-image: url(../../images/lalbagh\ 6.jpg);
+    background-size: cover;
+    border-radius: 10px;
+    box-shadow: 10px 10px 20px;
+    transition: 0.5s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 80px;
+    width: 160px;
+    margin: 9px;
+    cursor: pointer;
+  }
+
+  .tourist-places {
+    display: none;
+  }
+
+  .tourist-places-res {
+    display: flex;
+    flex-wrap: wrap;
+    /* height: 30%; */
+    overflow: auto;
+  }
+
+  .anyhotel-row {
+    display: none;
+  }
+
+  .anyhotel-row-res {
+    display: flex;
+    flex-wrap: wrap;
+    border: 1px solid black;
+    border-radius: 10px;
+  }
+
+  .any-hotel-img-res {
+    background-image: url(../../images/istockphoto-119926339-612x612.jpg);
+    background-size: cover;
+    border-radius: 10px;
+    box-shadow: 10px 10px 20px;
+    transition: 0.5s;
+    display: flex;
+    cursor: grab;
+    align-items: center;
+    justify-content: center;
+    margin: 10px;
+    height: 80px;
+    width: 117px;
+  }
+
+  .any-hotel-img-res>span {
+    background-color: rgba(61, 56, 56, 0.7);
+    /* Adjust opacity as needed */
+    color: white;
+    font-size: 15px;
+    /* Adjust as needed */
+    /* padding: 5px; */
+    border-radius: 5px;
+    margin-top: 70px;
+    transition: 0.2s;
+  }
+
+  .anyhotel-row>span {
+    display: none;
+  }
+
+  .tourist-place-section {
+    display: none;
+    /* Hide on mobile */
+  }
+
+  .tourist-place-section-res {
+    display: block;
+    /* Show on mobile */
+  }
+
+  .hotels-row-res {
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+    /* align-content: stretch; */
+    flex-wrap: wrap;
+    flex-direction: row;
+  }
+
+  .hotel-img-res {
+    background: #fff;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    cursor: grab;
+    margin: 5px;
+    height: 80px;
+    width: 117px;
+    transition: transform 0.2s ease;
+    background-image: url(../../images/istockphoto-119926339-612x612.jpg);
+    background-size: cover;
+  }
+
+  .hotel-img-res span {
+    display: block;
+    text-align: center;
+    background-color: rgba(61, 56, 56, 0.7);
+    /* Adjust opacity as needed */
+    color: white;
+    font-size: 15px;
+    /* Adjust as needed */
+    /* padding: 5px; */
+    border-radius: 5px;
+    margin-top: 50px;
+  }
+
+  .place-not-selected {
+    display: none;
+  }
+
+  .place-not-selected-res {
+    font-size: 15px;
+    width: 100%;
+    color: #0f0101;
+    text-align: center;
+    position: relative;
+
+    padding: 10px;
+    background: #a59999;
+    border-radius: 5px;
+    border: 2px solid #0a0a0a;
+  }
+
+  .region-btn {
+    background-image: linear-gradient(to bottom, rgb(214, 145, 145), rgb(148, 41, 41));
+
+    margin: 10px 10px;
+    width: 84px;
+    height: 34px;
+    border: none;
+    border-radius: 10px;
+    text-align: center;
+  }
+
+  #map {
+    height: 300px;
+    border-radius: 10px;
+    border: 2px solid rgb(161 141 141);
+    width: 99%
+  }
+}
