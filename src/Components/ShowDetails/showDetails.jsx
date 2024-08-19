@@ -297,26 +297,8 @@ function ShowDetails({
     doc.setFontSize(12); // Adjust font size as needed
     doc.setFont("helvetica", "bold");
   
-    const pageWidth = Math.floor(doc.internal.pageSize.getWidth());
 
     const pageHeight = doc.internal.pageSize.getHeight();
-
-    // Center the first line of text within the border
-    const firstLineText = "Contact for picTOURnic exclusive curated \n“Domestic and International” Package Tours";
-    const firstLineWidth = pageWidth-80;
-    const firstLineX = (pageWidth - firstLineWidth) / 2; // Centered within the page
-    const firstLineY = currentY + 20; // Adjust vertical position as needed
-    
-    doc.text(firstLineText, firstLineX, firstLineY);
-  
-    // Center the second line of text within the border
-    const secondLineText = "Offering customized Tours.\nBest in Class Quality Service with comparatively guaranteed lower Prices.";
-    doc.setFontSize(12); // Adjust font size as needed
-    const secondLineWidth =pageWidth-80;
-    const secondLineX = (pageWidth - secondLineWidth) / 2; // Centered within the page
-    const secondLineY = firstLineY + 20; // Adjust vertical position as needed
-  
-    doc.text(secondLineText, secondLineX, secondLineY);
   
     doc.setTextColor(0, 0, 0);
     // Add Footer with Timestamp
